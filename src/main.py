@@ -42,20 +42,26 @@ reset = "\033[0m"
 # ---------------------------
 np.random.seed(7)
 
-def process_spreadsheet(csv) -> pd.DataFrame:
-    """
+def process_spreadsheet(PATH_TO_CSV: pathlib.Path) -> pd.DataFrame:
+    """Wrangle CSV trading data.
 
     Take a spreadsheet of trading data and 
-    extract date, close, and symbol.
-
+    construct a pandas DataFrame with columns:
+        date, close, and symbol.
     This function assumes OHLCV schema.
 
-    :param csv: Path to CSV file
-    :return: Pandas Dataframe with desired columns
-    :rtype: Any
+    Parameters
+    ----------
+    PATH_TO_CSV: 
+        Path to CSV file with OHLCV trading data.
+    
+    Returns
+    -------
+    pd.Dataframe
+        Pandas Dataframe with desired columns.
     """
-    # read csv into a dataframe
-    data = pd.read_csv(csv) 
+    # read PATH_TO_CSV into a dataframe
+    data = pd.read_csv(PATH_TO_CSV) 
     logger.debug(f"{yellow}CSV converted to Pandas Dataframe:{reset}\n{data.head()}")
     # ensure column names are lowercase
     data.columns = list(name.lower() for name in data.columns)
@@ -70,8 +76,7 @@ def process_spreadsheet(csv) -> pd.DataFrame:
     return data
 
 def calculate_returns(close_data: pd.DataFrame) -> pd.DataFrame:
-    tickers = close_data["symbol"].unique().tolist()
-    frames = pd.Series(index=tickers)
+    tickers = sorted(close_data["symbol"].unique().tolist())
     new_columns = ["symbol", "date", "close", "returns", "log_close", "log_returns"]
     logger.debug(f"{yellow}Columns for new dataframes: {new_columns}{reset}")
     list_of_new_frames = []
@@ -82,6 +87,7 @@ def calculate_returns(close_data: pd.DataFrame) -> pd.DataFrame:
         temp_frame["returns"] = temp_frame.close.diff()
         temp_frame["log_close"] = np.log(temp_frame.close)
         temp_frame["log_returns"] = temp_frame.log_close.diff()
+        temp_frame["log_returns_pct_change"] = temp_frame["log_returns"] * 100
         temp_frame = temp_frame.dropna()
         list_of_new_frames.append(temp_frame.copy())
         #logger.debug(f"{hl_blue}new frame created for {ticker}:{reset} \n{list_of_new_frames[-1]}")
@@ -90,22 +96,68 @@ def calculate_returns(close_data: pd.DataFrame) -> pd.DataFrame:
     return returns
 
 def calculate_metrics(return_data: pd.DataFrame) -> pd.DataFrame:
-    tickers = return_data["symbol"].unique().tolist()
+    tickers = sorted(return_data["symbol"].unique().tolist())
     means = []
     stds = []
-    metrics = pd.DataFrame(index=tickers, columns=["mean", "std_dev"])
+    metrics = pd.DataFrame(index=tickers, columns=["log_mean", "log_std_dev"])
     logger.debug(f"{yellow}Initialized empty dataframe{reset} \n {metrics}")
     for ticker in tickers:
         means.append(float(return_data.loc[return_data["symbol"] == ticker, ["log_returns"]].mean()))
         stds.append(float(return_data.loc[return_data["symbol"] == ticker, ["log_returns"]].std()))
     means = np.array(means)
     stds = np.array(stds)
-    metrics["mean"] = ((means + 1)**2016 - 1) * 100
-    metrics["std_dev"] = (stds * np.sqrt(2016)) * 100
+    metrics["log_mean"] = ((means + 1)**2016 - 1)  
+    metrics["log_std_dev"] = (stds * np.sqrt(2016))
 
-    logger.info(f"\n   {hl_green} Annualized Log-Return {reset}\n{hl_green} Means & Standard Deviations {reset}\n{green}{metrics}{reset}")
+    logger.info(f"\n{hl_green}    Annualized Log-Return    {reset}\
+                \n{hl_green} Means & Standard Deviations {reset}\
+                \n{hl_green}            (in %)           {reset}\
+                \n{green}{metrics}{reset}")
     return metrics
 
+def correlation(return_data: pd.DataFrame, metrics: pd.DataFrame) -> pd.DataFrame:
+    """
+    This will construct a correlation matrix with given returns
+    """
+    logger.info(f"{hl_yellow}Calculating correlations for given returns{reset}\
+                \n{yellow}{return_data}{reset}\
+                \n{hl_yellow}With metrics{reset}\
+                \n{yellow}{metrics}{reset}")
+    tickers = sorted(return_data["symbol"].unique().tolist())
+    list_of_metric_frames = []
+    for ticker in tickers:
+        temp_mask = return_data["symbol"] == ticker
+        temp_frame = pd.DataFrame(return_data.loc[temp_mask], columns=["symbol", "date", "close", "return", "log_returns"])
+        temp_frame["normalized_returns"] = temp_frame.close - metrics.loc[ticker][0]
+        list_of_metric_frames.append(temp_frame.copy())
+    data = pd.concat(list_of_metric_frames)
+    logger.info(f"{hl_blue} Returns Normalized {reset}\
+                \n {data[["symbol", "normalized_returns"]]}")
+    #counts = return_data["symbol"].value_counts()
+    #counts = counts.values.reshape(-1, 1)
+    #avg_observations = (counts + counts.T) / 2
+    #prefactors = 1 / (avg_observations - 1)
+    #logger.info(f"{hl_yellow}Prefactors:{reset} \
+                #\n {prefactors}")
+    # =====================
+    # 1. Pivot so symbols are columns and dates are rows
+    # We use 'log_returns' as it's the standard for financial covariance
+    pivoted_returns = data.pivot(index='date', columns='symbol', values='log_returns')
+
+    # 2. Compute the pairwise covariance matrix
+    # This method automatically handles missing values (NaNs)
+    #covariance_matrix = pivoted_returns.cov() * 2016
+    correlation_matrix = pivoted_returns.corr()
+
+    #logger.info(covariance_matrix)
+    logger.info(f"{hl_green} Correlation Matrix {reset} \
+                \n{green}{correlation_matrix}{reset}")
+    logger.info(f"{hl_green}Eigenvalues of the correlation matrix:{reset}\
+                 \n{green}{np.linalg.eigvals(correlation_matrix)}{reset}")
+    # =====================
+    logger.info(f"{hl_green}Cholesky Decomposition{reset}\
+                \n {green}{np.linalg.cholesky(correlation_matrix)}{reset}")
+    return correlation_matrix
 
 def gbm_sim_antithetic(
     s0: float, drift: float, diffusion: float, n: int, t: float
@@ -192,9 +244,10 @@ def generate_matrix(
 def main():
     setup_logging()
     logger.info(f"{green}Logging initialized.{reset}")
-    file = pathlib.Path("data/xnas-itch-20180501-20260107.ohlcv-1h.csv")
+    file = pathlib.Path("data/databento/xnas-itch-20180501-20260107.ohlcv-1h.csv")
     df = process_spreadsheet(file)
     returns = calculate_returns(df)
     matrix = calculate_metrics(returns)
+    correlations = correlation(returns, matrix)
 if __name__ == "__main__":
     main()
