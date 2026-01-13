@@ -106,8 +106,8 @@ def calculate_metrics(return_data: pd.DataFrame) -> pd.DataFrame:
         stds.append(float(return_data.loc[return_data["symbol"] == ticker, ["log_returns"]].std()))
     means = np.array(means)
     stds = np.array(stds)
-    metrics["log_mean"] = ((means + 1)**2016 - 1)  
-    metrics["log_std_dev"] = (stds * np.sqrt(2016))
+    metrics["log_mean"] = ((means + 1)**2016 - 1) * 100
+    metrics["log_std_dev"] = (stds * np.sqrt(2016)) * 100
 
     logger.info(f"\n{hl_green}    Annualized Log-Return    {reset}\
                 \n{hl_green} Means & Standard Deviations {reset}\
