@@ -1,9 +1,11 @@
 # MFM Winter Workshop: Project 1
 ## Installation
-
+Run the following to install package:
 ```shell
-pip install -e .
+pip install project1
 ```
+
+(It will be helpful to have the package for importing the methods into a jupyter notebook.)
 
 ## Running
 ### Parameters and Data Processing

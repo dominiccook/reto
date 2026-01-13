@@ -1,4 +1,7 @@
+README.md
 pyproject.toml
+src/databento/Modern_Portfolio_Success_Rate_MFM_Workshop.py
+src/mentor/Modern_Portfolio_Success_Rate_MFM_Workshop.py
 src/project1.egg-info/PKG-INFO
 src/project1.egg-info/SOURCES.txt
 src/project1.egg-info/dependency_links.txt
