@@ -10,6 +10,9 @@ pip install project1
 ## Running
 ### Parameters and Data Processing
 Running the main source file will print logs that show the data I've used from databento, and the calculations I'm doing to find the parameters I'm putting in our mentor's script.
+
+The return data is NOT included in this repository. If you would like to run this with actual return data, the main.py file assumes OHLCV schema for hourly returns. However, the necessary return metrics and correlations are included as CSV files in this repository and can be found in the data subdirectory.
+
 ```shell
 python src/main.py
 ```
