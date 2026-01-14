@@ -1,5 +1,5 @@
 # MFM Winter Workshop: Project 1
-## Quick Start
+# Quick Start
 ### Unix (Linux/MacOS)
 ```shell
 git clone git@github.com/dominiccook/reto && cd reto
@@ -24,13 +24,30 @@ git clone git@github.com:dominiccook/reto.git; cd reto
 python src\databento\Modern_Portfolio_Success_Rate_MFM_Workshop.py
 ```
 
-## Installation
+# Installation
 Run the following to install package:
 ```shell
 pip install project1
 ```
+## Available Imports 
+It will be helpful to have the package for importing the methods into a jupyter notebook, since jupyter notebooks provide lots of functionality that it helpful when exploring the code, and testing different parameters. 
+(NOTE: More parametrization is needed to make the package more portable, and improve its usability in a jupyter notebook.)
+*(NOTE: These _will_ change, but I will try to keep the README up-to-date.)*
+```python
+# main.py consists of the functions used
+#+to wrangle the return data and calculate
+#+the metrics entered into the other modules.
+import main
 
-(It will be helpful to have the package for importing the methods into a jupyter notebook.)
+# The following two modules contain the scripts
+#+that do the actual simulating.
+# Uses metrics calculated from databento returns.
+import databento
+
+# Uses metrics provided by mentor's initial
+#+portfolio.
+import mentor
+```
 
 ## Running
 ### Parameters and Data Processing
