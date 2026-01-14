@@ -1,4 +1,29 @@
 # MFM Winter Workshop: Project 1
+## Quick Start
+### Unix (Linux/MacOS)
+```shell
+git clone git@github.com/dominiccook/reto && cd reto
+```
+```shell
+python src/databento/Modern_Portfolio_Success_Rate_MFM_Workshop.py
+```
+
+### Windows
+#### Command Prompt/CMD
+```cmd
+git clone git@github.com:dominiccook/reto.git & cd reto
+```
+```cmd
+python src\databento\Modern_Portfolio_Success_Rate_MFM_Workshop.py
+```
+#### Powershell
+```powershell
+git clone git@github.com:dominiccook/reto.git; cd reto
+```
+```powershell
+python src\databento\Modern_Portfolio_Success_Rate_MFM_Workshop.py
+```
+
 ## Installation
 Run the following to install package:
 ```shell
