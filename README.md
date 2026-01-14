@@ -1,6 +1,10 @@
 # MFM Winter Workshop: Project 1
-[NOTE: To view some sample figures with 10 different allocations, checkout tester.ipynb]
 *[CAUTION: The files called test_allocation should only be run from the notebook directory since they require relative paths]*
+
+
+You can check the notebook folder for some intial tests.
+
+
 # Quick Start
 ## Unix (Linux/MacOS)
 ```shell
