@@ -55,7 +55,7 @@ import databento
 import mentor
 ```
 
-## Running
+# Running
 ### Parameters and Data Processing
 Running the main source file will print logs that show the data I've used from databento, and the calculations I'm doing to find the parameters I'm putting in our mentor's script.
 
@@ -84,6 +84,6 @@ python src/databento/Modern_Portfolio_Success_Rate_MFM_Workshop.py
 
 
 
-## TODO
+# TODO
 - Increase portability of the code.
 - Come up with ways of improving our model.
