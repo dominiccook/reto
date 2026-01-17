@@ -1,17 +1,13 @@
 # MFM Winter Workshop: Project 1
-*[CAUTION: The files called test_allocation should only be run from the notebook directory since they require relative paths]*
-
-
-You can check the notebook folder for some intial tests.
-
 
 # Quick Start
+You can check the notebook folder for some intial tests and their outputs.
 ## Unix (Linux/MacOS)
 ```shell
 git clone git@github.com/dominiccook/reto && cd reto
 ```
 ```shell
-python src/databento/Modern_Portfolio_Success_Rate_MFM_Workshop.py
+python src/Modern_Portfolio_Success_Rate_MFM_Workshop.py
 ```
 
 ## Windows
@@ -20,14 +16,14 @@ python src/databento/Modern_Portfolio_Success_Rate_MFM_Workshop.py
 git clone git@github.com:dominiccook/reto.git & cd reto
 ```
 ```cmd
-python src\databento\Modern_Portfolio_Success_Rate_MFM_Workshop.py
+python src\Modern_Portfolio_Success_Rate_MFM_Workshop.py
 ```
 #### Powershell
 ```powershell
 git clone git@github.com:dominiccook/reto.git; cd reto
 ```
 ```powershell
-python src\databento\Modern_Portfolio_Success_Rate_MFM_Workshop.py
+python src\ Modern_Portfolio_Success_Rate_MFM_Workshop.py
 ```
 
 # Installation
@@ -45,19 +41,16 @@ It will be helpful to have the package for importing the methods into a jupyter 
 #+the metrics entered into the other modules.
 import main
 
-# The following two modules contain the scripts
+# The following module contains the scripts
 #+that do the actual simulating.
-# Uses metrics calculated from databento returns.
-import Modern_Portfolio_Success_Rate
-
-# Uses metrics provided by mentor's initial
-#+portfolio.
-import mentor
+# Uses metrics calculated from calculated
+#+databento returns by default.
+import Modern_Portfolio_Success_Rate as mpsr
 ```
 
-# Running
+# Usage
 ### Parameters and Data Processing
-Running the main source file will print logs that show the data I've used from databento, and the calculations I'm doing to find the parameters I'm putting in our mentor's script.
+Running the main source file will print logs that show the data used from databento, and the calculations done to find the parameters put into the mentor script.
 
 The return data is NOT included in this repository. If you would like to run this with actual return data, the main.py file assumes OHLCV schema for hourly returns. However, the necessary return metrics and correlations are included as CSV files in this repository and can be found in the data subdirectory.
 
@@ -68,22 +61,9 @@ python src/main.py
 ![Index Fund Return Calculations from Hourly Return Data](examples/main_output.png "Terminal Output")
 
 ### Simulation
-Running these Portfolio Success Rate scripts will simulate future portfolio successes, either with the Original parameters provided by our mentor, or with the parameters calculated by our script.
+Running this Portfolio Success Rate script will simulate future portfolio successes, indicate the portfolio with the highest success rate across 1000 paths, and print the optimal weights associated with that most successful portfolio.
 
 ```shell
-python src/mentor/Modern_Portfolio_Success_Rate_MFM_Workshop.py
-```
-
- ![Mentor Simulation](examples/Figure_1.png "Portfolio Success Rate | Mentor")
-
-
-```shell
-python src/databento/Modern_Portfolio_Success_Rate_MFM_Workshop.py
+python src/Modern_Portfolio_Success_Rate_MFM_Workshop.py
 ``` 
- ![Student Simulation](examples/figure_1_databento.png "Portfolio Success Rate | Mentor")
-
-
-
-# TODO
-- Increase portability of the code.
-- Come up with ways of improving our model.
+ ![Student Simulation](examples/figure_1_databento.png "Portfolio Success Rate")
